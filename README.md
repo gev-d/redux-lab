@@ -23,3 +23,5 @@ The app state is updated frequently over time
 The logic to update that state may be complex
 The app has a medium or large-sized codebase, and might be worked on by many people
 Not all apps need Redux. Take some time to think about the kind of app you're building, and decide what tools would be best to help solve the problems you're working on.
+
+Global state that is needed across the app should go in the Redux store. State that's only needed in one place should be kept in component state.
