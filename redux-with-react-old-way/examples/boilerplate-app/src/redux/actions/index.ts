@@ -1,5 +1,7 @@
 import type { Dispatch } from "redux";
 
+import type { Todo } from "../../types/todos";
+
 export const todoToggled = (id: number) => ({
   type: "todos/todoToggled",
   payload: id,
@@ -23,18 +25,11 @@ export const completedCleared = () => ({
   type: "todos/completedCleared",
 });
 
-type Todo = {
-  id: number;
-  text: string;
-  completed: boolean;
-  color?: string;
-};
-
 export const setTodos = (todos: Todo[]) => ({
   type: "todos/setTodos",
   payload: todos,
 });
-
+ 
 export const fetchTodos = () => (dispatch: Dispatch) => {
   // Simulate an API call
   setTimeout(() => {

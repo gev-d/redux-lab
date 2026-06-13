@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "./hooks/react-redux";
-import { selectTodos, selectIsLoading } from "./redux/selectors/todos";
+import { selectAllTodos, selectIsLoading } from "./redux/selectors/todos";
 import {
   fetchTodos,
   todoToggled,
@@ -11,7 +11,7 @@ import {
 function App() {
   // useSelector: read pieces of state from the store.
   // The component re-renders whenever the selected value changes.
-  const todos = useAppSelector(selectTodos);
+  const todos = useAppSelector(selectAllTodos);
   const isLoading = useAppSelector(selectIsLoading);
 
   // useDispatch: get the store's dispatch function to send actions.
@@ -34,7 +34,7 @@ function App() {
       </div>
 
       <ul style={{ listStyle: "none", padding: 0 }}>
-        {todos.map((todo: any) => (
+        {todos.map((todo) => (
           <li
             key={todo.id}
             style={{

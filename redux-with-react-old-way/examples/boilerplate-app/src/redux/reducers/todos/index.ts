@@ -1,42 +1,46 @@
 import { produce } from "immer";
 
 import { initialState } from "./initialState";
+import type { TodosState } from "../../../types/todos";
 
 // `produce(recipe, initialState)` returns a reducer. Inside the recipe we can
 // "mutate" the `draft` directly — Immer produces the next immutable state for us.
-const todosReducer = produce((draft, action: any) => {
+// State is normalized: `draft.todos` is a map of `id -> todo`.
+const todosReducer = produce((draft: TodosState, action: any) => {
   switch (action.type) {
     case "todos/todoToggled": {
-      const todo = draft.todos.find((t) => t.id === action.payload);
-      if (todo) {
-        todo.completed = !todo.completed;
-      }
+      draft.todos[action.payload].completed =
+        !draft.todos[action.payload].completed;
       break;
     }
     case "todos/colorSelected": {
       const { color, todoId } = action.payload;
-      const todo = draft.todos.find((t) => t.id === todoId);
-      if (todo) {
-        todo.color = color;
-      }
+      draft.todos[todoId].color = color;
       break;
     }
     case "todos/todoDeleted": {
-      draft.todos = draft.todos.filter((t) => t.id !== action.payload);
+      delete draft.todos[action.payload];
       break;
     }
     case "todos/allCompleted": {
-      draft.todos.forEach((todo) => {
+      Object.values(draft.todos).forEach((todo) => {
         todo.completed = true;
       });
       break;
     }
     case "todos/completedCleared": {
-      draft.todos = draft.todos.filter((todo) => !todo.completed);
+      Object.values(draft.todos)
+        .filter((todo) => todo.completed)
+        .forEach((todo) => {
+          delete draft.todos[todo.id];
+        });
       break;
     }
     case "todos/setTodos": {
-      draft.todos = action.payload;
+      draft.todos = action.payload.reduce((acum: any, todo: any) => {
+        acum[todo.id] = todo;
+        return acum;
+      }, {});
       draft.isLoading = false;
       break;
     }
