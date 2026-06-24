@@ -19,7 +19,7 @@ export function PostForm({ initialPost, onSubmit, onCancel }: PostFormProps) {
   const [title, setTitle] = useState(initialPost?.title ?? "");
   const [author, setAuthor] = useState(initialPost?.author ?? "");
   const [content, setContent] = useState(initialPost?.content ?? "");
-
+ 
   const isEditing = Boolean(initialPost);
   const canSave =
     title.trim() !== "" && content.trim() !== "" && author.trim() !== "";

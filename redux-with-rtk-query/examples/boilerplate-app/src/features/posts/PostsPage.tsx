@@ -1,65 +1,58 @@
 import { useState } from "react";
-import type { NewPost, Post } from "./types";
-import { mockPosts } from "./mockPosts";
+import type { NewPost } from "./types";
 import { PostForm } from "./PostForm";
 import { PostList } from "./PostList";
-
-/** Throwaway id generator for the local demo (the server will assign real ids). */
-function makeLocalId() {
-  return Math.random().toString(36).slice(2, 10);
-}
+import { SinglePostView } from "./SinglePostView";
+import { Modal } from "./Modal";
+import { PostsStats } from "./PostsStats";
+import { useGetPostsQuery, useAddNewPostMutation } from "../api/apiSlice";
 
 /**
- * The page that ties the UI together. For now it owns the posts in local
- * component state so everything is interactive without a backend.
- *
- * This is the component you'll later "upgrade": swap `useState(mockPosts)` for
- * `useGetPostsQuery()` and the handlers for `useAddNewPostMutation()` /
- * update / delete mutations. The presentational pieces below won't change.
+ * Container for the posts UI. Data comes from RTK Query; the presentational
+ * pieces (PostForm, PostList, PostCard, SinglePostView) just render props.
  */
 export function PostsPage() {
-  const [posts, setPosts] = useState<Post[]>(mockPosts);
-  const [editingPost, setEditingPost] = useState<Post | null>(null);
+  // UI-only state.
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
 
-  function handleAdd(values: NewPost) {
-    const now = new Date().toISOString();
-    const post: Post = { id: makeLocalId(), ...values, createdAt: now, updatedAt: now };
-    setPosts((prev) => [post, ...prev]);
+  const { data: posts = [] } = useGetPostsQuery();
+  const [addNewPost] = useAddNewPostMutation();
+
+  async function handleAdd(values: NewPost) {
+    await addNewPost(values).unwrap();
   }
 
-  function handleUpdate(values: NewPost) {
-    if (!editingPost) return;
-    const now = new Date().toISOString();
-    setPosts((prev) =>
-      prev.map((post) =>
-        post.id === editingPost.id ? { ...post, ...values, updatedAt: now } : post,
-      ),
-    );
-    setEditingPost(null);
-  }
-
+  // TODO: const [deletePost] = useDeletePostMutation();
   function handleDelete(id: string) {
-    setPosts((prev) => prev.filter((post) => post.id !== id));
-    if (editingPost?.id === id) setEditingPost(null);
+    // await deletePost(id).unwrap();
+    console.log("delete post", id);
   }
 
   return (
     <main className="posts-page">
       <header className="posts-page__header">
         <h1>Posts</h1>
-        <p className="subtitle">
-          UI only — backed by local state for now. Wire up RTK Query next.
-        </p>
+        <p className="subtitle">Click a post title to view it.</p>
+        <PostsStats />
       </header>
 
-      <PostForm
-        key={editingPost?.id ?? "new"}
-        initialPost={editingPost}
-        onSubmit={editingPost ? handleUpdate : handleAdd}
-        onCancel={editingPost ? () => setEditingPost(null) : undefined}
-      />
+      <PostForm key={"new"} onSubmit={handleAdd} onCancel={undefined} />
 
-      <PostList posts={posts} onEdit={setEditingPost} onDelete={handleDelete} />
+      {selectedPostId && (
+        <Modal onClose={() => setSelectedPostId(null)}>
+          <SinglePostView
+            key={selectedPostId}
+            postId={selectedPostId}
+            onClose={() => setSelectedPostId(null)}
+          />
+        </Modal>
+      )}
+
+      <PostList
+        posts={posts}
+        onView={setSelectedPostId}
+        onDelete={handleDelete}
+      />
     </main>
   );
 }

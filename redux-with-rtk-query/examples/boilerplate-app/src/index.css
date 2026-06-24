@@ -33,9 +33,22 @@ body {
 }
 
 .subtitle {
-  margin: 0.25rem 0 1.5rem;
+  margin: 0.25rem 0 1rem;
   color: var(--muted);
   font-size: 0.9rem;
+}
+
+.posts-stats {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.posts-stats strong {
+  color: var(--text);
 }
 
 /* --- Form --- */
@@ -166,4 +179,78 @@ button.danger {
   color: var(--muted);
   text-align: center;
   padding: 2rem 0;
+}
+
+/* --- Clickable post title --- */
+.post-card__title button.link {
+  all: unset;
+  cursor: pointer;
+  color: var(--text);
+  font: inherit;
+}
+
+.post-card__title button.link:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* --- Single post view --- */
+.post-view {
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.post-view__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.post-view__label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+}
+
+.post-view__bar button {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+}
+
+.post-view__title {
+  margin: 0.25rem 0 0;
+}
+
+.post-view__dates {
+  margin: 0.75rem 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+/* --- Modal / popup --- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 4rem 1rem;
+  z-index: 100;
+}
+
+.modal {
+  width: 100%;
+  max-width: 480px;
+}
+
+/* These already look like cards; just drop their outer margin in the modal. */
+.modal .post-view,
+.modal .post-form {
+  margin-bottom: 0;
 }

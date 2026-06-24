@@ -14,3 +14,6 @@ export interface Post {
 
 /** Fields the user supplies when creating or editing a post. */
 export type NewPost = Pick<Post, "title" | "content" | "author">;
+
+/** Payload for editing a post: its id plus the editable fields. */
+export type PostUpdate = Pick<Post, "id"> & NewPost;
